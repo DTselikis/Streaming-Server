@@ -1,5 +1,8 @@
+package services;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import res.VideoInfo;
 import utils.VideoExtensionFileFilter;
 import utils.VideoManager;
 
@@ -9,8 +12,9 @@ import java.util.ArrayList;
 public class StreamingServerService {
     private final File workingDirectory;
     private ArrayList<String> videoTitles;
+    private ArrayList<VideoInfo> videosInfo;
 
-    private static final Logger LOGGER = LogManager.getLogger(StreamingServer.class);
+    private static final Logger LOGGER = LogManager.getLogger(StreamingServerService.class);
 
     public StreamingServerService(String[] args) {
         String dir = "";
@@ -24,6 +28,12 @@ public class StreamingServerService {
         finally {
             workingDirectory = new File(dir);
         }
+
+        this.videosInfo = new ArrayList<VideoInfo>();
+    }
+
+    public void addVideoInfo(VideoInfo videoInfo) {
+        this.videosInfo.add(videoInfo);
     }
 
     public int start() {
@@ -48,9 +58,11 @@ public class StreamingServerService {
             return 1;
         }
 
+        ServerServiceCallback callback = new ServerServiceCallback(this);
+
         // Start a VideoManager for each unique video title
         for (String videoTitle : videoTitles) {
-            new Thread(new VideoManager(videoTitle, workingDirectory)).start();
+            new Thread(new VideoManager(videoTitle, workingDirectory, callback)).start();
         }
 
 
