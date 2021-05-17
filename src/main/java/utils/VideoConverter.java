@@ -31,9 +31,9 @@ public class VideoConverter implements Runnable {
         FFmpegBuilder builder = null;
         FFprobe ffprobe = null;
 
-        int resPos = source.getName().indexOf('-');
+        int resPos = source.toString().indexOf('-');
         StringBuilder dest = new StringBuilder();
-        dest.append(source.getName().substring(0, resPos)).append(targerRes).append("p.").append(targerContainer);
+        dest.append(source.toString().substring(0, resPos + 1)).append(targerRes).append("p.").append(targerContainer);
 
         Integer[] resolution = VideoInfo.getResolution(targerRes);
 
@@ -45,12 +45,15 @@ public class VideoConverter implements Runnable {
         }
 
         builder = new FFmpegBuilder()
-                .setInput(source.getName())
+                .setInput(source.toString())
                 .addOutput(dest.toString())
-                .setFormat(targerContainer)
+                .setFormat((targerContainer.equals("mkv") ? "matroska" : targerContainer))
                 .setVideoResolution(resolution[0], resolution[1])
                 .done();
 
         FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
+
+        // Run a one-pass encode
+        executor.createJob(builder).run();
     }
 }
