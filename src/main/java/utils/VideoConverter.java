@@ -4,7 +4,7 @@ import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
-import res.VideoInfo;
+import res.MediaInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class VideoConverter implements Runnable {
         StringBuilder dest = new StringBuilder();
         dest.append(source.toString().substring(0, resPos + 1)).append(targerRes).append("p.").append(targerContainer);
 
-        Integer[] resolution = VideoInfo.getResolution(targerRes);
+        Integer[] resolution = MediaInfo.getResolution(targerRes);
 
         try {
              ffmpeg = new FFmpeg("C:\\Users\\Louk\\Downloads\\ffmpeg\\ffmpeg.exe");

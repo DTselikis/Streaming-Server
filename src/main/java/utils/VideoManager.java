@@ -1,7 +1,5 @@
 package utils;
 
-import res.VideoInfo;
-
 import java.io.File;
 import java.util.ArrayList;
 

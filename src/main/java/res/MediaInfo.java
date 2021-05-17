@@ -3,7 +3,7 @@ package res;
 import java.util.HashMap;
 import java.util.Set;
 
-public class VideoInfo {
+public class MediaInfo {
     public static final Integer FHD = 1080; // Full High Definition
     public static final Integer HD = 720; // High Definition
     public static final Integer ED = 480; // Enhanced Definition
