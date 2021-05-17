@@ -15,11 +15,11 @@ public class StreamingServerService {
     public StreamingServerService(String[] args) {
         String dir = "";
         try {
-            dir = args[1];
+            dir = args[0];
         }
         catch (IndexOutOfBoundsException ex) {
             LOGGER.info("Working directory was not provided. Using launch directory...");
-            dir = args[0];
+            dir = System.getProperty("user.dir");
         }
         finally {
             workingDirectory = new File(dir);
