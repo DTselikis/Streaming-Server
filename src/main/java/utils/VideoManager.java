@@ -1,13 +1,21 @@
 package utils;
 
+import res.MediaInfo;
+import res.VideoInfo;
+import services.ServerServiceCallback;
+import services.StreamingServerService;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class VideoManager implements Runnable {
 
-    private final String name;
+    private final String videoTitle;
     private final File workingDirectory;
+    private final ServerServiceCallback callback;
     private File sourceFile;
+    private HashMap<Integer, ArrayList<String>> formats = null;
 
     private ArrayList<String[]> missingFiles = new ArrayList<String[]>() {
         {
@@ -31,13 +39,15 @@ public class VideoManager implements Runnable {
         }
     };
 
-    public VideoManager(String name, File workingDirectory) {
-        this.name = name;
+    public VideoManager(String videoTitle, File workingDirectory, ServerServiceCallback callback) {
+        this.videoTitle = videoTitle;
         this.workingDirectory = workingDirectory;
+        this.callback = callback;
     }
 
     private void checkMissing() {
-        File[] dirListing = workingDirectory.listFiles(new VideoFileNameFilter(name));
+        File[] dirListing = workingDirectory.listFiles(new VideoFileNameFilter(videoTitle));
+        formats = new HashMap<Integer, ArrayList<String>>();
 
         int maxRes = 0;
 
@@ -60,6 +70,8 @@ public class VideoManager implements Runnable {
                 maxRes = Integer.parseInt(res);
                 sourceFile = file;
             }
+
+            addFormat(res, container);
         }
 
         // Remove all higher resolutions
@@ -87,6 +99,15 @@ public class VideoManager implements Runnable {
         }
     }
 
+    private void addFormat(String res, String container) {
+        // For each available resolution create a new ArrayList with its available
+        // containers
+        if (!formats.containsKey(MediaInfo.valueOf(res))) {
+            formats.put(MediaInfo.valueOf(res), new ArrayList<String>());
+        }
+        formats.get(MediaInfo.valueOf(res)).add(container);
+    }
+
     private int findIndex(String res, String container) {
         int i = 0;
         for (String[] missingFile : missingFiles) {
@@ -110,8 +131,12 @@ public class VideoManager implements Runnable {
             threads[i] = new Thread(new VideoConverter(Integer.valueOf(missingFile[0]), missingFile[1], sourceFile));
             threads[i].start();
 
+            addFormat(missingFile[0], missingFile[1]);
+
             i++;
         }
+
+        callback.callback(new VideoInfo(videoTitle, formats));
 
         // Wait for each thread to finish
         for (Thread thread : threads) {

@@ -51,4 +51,18 @@ public class MediaInfo {
     public static String[] getContainers() {
         return containers;
     }
+
+    public static Integer valueOf(String res) {
+        Integer IntRes = null;
+
+        switch (res) {
+            case "240": IntRes =  LD; break;
+            case "360": IntRes =  SD; break;
+            case "480": IntRes =  ED; break;
+            case "720": IntRes =  HD; break;
+            case "1080": IntRes =  FHD; break;
+        }
+
+        return IntRes;
+    }
 }
