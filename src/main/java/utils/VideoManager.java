@@ -29,7 +29,7 @@ public class VideoManager implements Runnable {
             add(new String[]{"360", "mkv"});
             add(new String[]{"480", "mkv"});
             add(new String[]{"720", "mkv"});
-            add(new String[]{"1080", "avi"});
+            add(new String[]{"1080", "mkv"});
         }
     };
 
@@ -39,50 +39,66 @@ public class VideoManager implements Runnable {
     }
 
     private void checkMissing() {
-        File[] dirListing = workingDirectory.listFiles(new VideoFileNameFilter());
-        ArrayList<String[]> unsupported = new ArrayList<String[]>();
+        File[] dirListing = workingDirectory.listFiles(new VideoFileNameFilter(name));
+
         int maxRes = 0;
 
         // Removes files that exists
         for (File file : dirListing) {
             int resPos = file.getName().indexOf('-');
             int dotPos = file.getName().lastIndexOf('.');
-            String res = file.getName().substring(resPos, dotPos - 2);
-            String container = file.getName().substring(dotPos);
+            String res = file.getName().substring(resPos + 1, dotPos - 1);
+            String container = file.getName().substring(dotPos + 1);
 
-            missingFiles.remove(new String[]{res,container});
+            try {
+                missingFiles.remove(findIndex(res, container));
+            }
+            catch (IndexOutOfBoundsException ex) {
+                ex.getMessage();
+            }
+
 
             if (maxRes < Integer.parseInt(res)) {
                 maxRes = Integer.parseInt(res);
                 sourceFile = file;
             }
         }
-        
+
         // Remove all higher resolutions
         switch (maxRes) {
             case 240: {
-                unsupported.add(new String[]{"360", "avi"});
-                unsupported.add(new String[]{"360", "mp4"});
-                unsupported.add(new String[]{"360", "mkv"});
+                missingFiles.remove(findIndex("360", "avi"));
+                missingFiles.remove(findIndex("360", "mp4"));
+                missingFiles.remove(findIndex("360", "mkv"));
             }
             case 360: {
-                unsupported.add(new String[]{"480", "avi"});
-                unsupported.add(new String[]{"480", "mp4"});
-                unsupported.add(new String[]{"480", "mkv"});
+                missingFiles.remove(findIndex("480", "avi"));
+                missingFiles.remove(findIndex("480", "mp4"));
+                missingFiles.remove(findIndex("480", "mkv"));
             }
             case 480: {
-                unsupported.add(new String[]{"720", "avi"});
-                unsupported.add(new String[]{"720", "mp4"});
-                unsupported.add(new String[]{"720", "mkv"});
+                missingFiles.remove(findIndex("720", "avi"));
+                missingFiles.remove(findIndex("720", "mp4"));
+                missingFiles.remove(findIndex("720", "mkv"));
             }
             case 720: {
-                unsupported.add(new String[]{"1080", "avi"});
-                unsupported.add(new String[]{"1080", "mp4"});
-                unsupported.add(new String[]{"1080", "mkv"});
+                missingFiles.remove(findIndex("1080", "avi"));
+                missingFiles.remove(findIndex("1080", "mp4"));
+                missingFiles.remove(findIndex("1080", "mkv"));
             }
         }
+    }
 
-        missingFiles.removeAll(unsupported.subList(0, unsupported.size() - 1));
+    private int findIndex(String res, String container) {
+        int i = 0;
+        for (String[] missingFile : missingFiles) {
+            if (missingFile[0].equals(res) && missingFile[1].equals(container)) {
+                return i;
+            }
+            i++;
+        }
+
+        return -1;
     }
 
     @Override
@@ -90,11 +106,13 @@ public class VideoManager implements Runnable {
         checkMissing();
         Thread[] threads = new Thread[missingFiles.size()];
 
+        int i = 0;
         // For each missing file create a new thread for the convertion
         for (String[] missingFile : missingFiles) {
-            int i = 0;
             threads[i] = new Thread(new VideoConverter(Integer.valueOf(missingFile[0]), missingFile[1], sourceFile));
             threads[i].start();
+
+            i++;
         }
 
         // Wait for each thread to finish
