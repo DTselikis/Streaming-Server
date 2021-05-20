@@ -19,4 +19,21 @@ public class VideoInfo {
     public HashMap<Integer, ArrayList<String>> getFormats() {
         return this.formats;
     }
+
+    public ArrayList<Integer> getSupportedResolutions(ArrayList<Integer> supportedResolutions, String format) {
+        ArrayList<Integer> resolutions = new ArrayList<Integer>();
+
+        for (Integer res : supportedResolutions) {
+            ArrayList<String> resFormats = formats.get(res);
+
+            if (resFormats != null) {
+                int pos;
+                if ((pos = resFormats.indexOf(format)) != -1) {
+                    resolutions.add(res);
+                }
+            }
+        }
+
+        return resolutions;
+    }
 }
