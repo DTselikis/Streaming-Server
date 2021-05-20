@@ -36,4 +36,8 @@ public class VideoInfo {
 
         return resolutions;
     }
+
+    public String toFileName(String resolution, String format) {
+        return this.title + "-" + resolution + "p." + format;
+    }
 }

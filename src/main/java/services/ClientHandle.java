@@ -16,6 +16,8 @@ public class ClientHandle implements Runnable {
     private final StreamingServerSocket server;
     private final Socket socket;
 
+    private final String LOCALHOST = "127.0.0.1";
+
     public ClientHandle(StreamingServerSocket server, Socket socket) {
         this.server = server;
         this.socket = socket;
@@ -31,6 +33,42 @@ public class ClientHandle implements Runnable {
         return supportedFiles;
     }
 
+    private short startStreaming(String filePath, String format, String protocol) {
+        ProcessBuilder cmd = null;
+        ArrayList<String> args = new ArrayList<String>();
+        args.add("C:\\Users\\Louk\\Downloads\\ffmpeg\\ffmpeg.exe");
+
+        if (protocol.equals("UDP")) {
+            args.add("-re");
+        }
+
+        args.add("-i " + filePath);
+        args.add("-f" + format);
+
+        switch (protocol) {
+            case "UDP": {
+                args.add("udp://" + LOCALHOST + String.valueOf(server.getPort()));
+                break;
+            }
+            case "TCP": {
+                args.add("tcp://" + LOCALHOST + String.valueOf(server.getPort()) + "?listen");
+                break;
+            }
+        }
+
+        return 1;
+    }
+
+    private VideoInfo getVideoObjectFromTitle(String title) {
+        for (VideoInfo video : server.getVideoList()) {
+            if (video.getTitle().equals("title")) {
+                return video;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public void run() {
         ObjectInputStream input = null;
@@ -43,6 +81,8 @@ public class ClientHandle implements Runnable {
         }
 
         String[] msg = null;
+
+        // Receive bitrate and format from client
         try {
             msg = (String[]) input.readObject().toString().split("#");
         } catch (IOException e) {
@@ -54,12 +94,14 @@ public class ClientHandle implements Runnable {
         int bitrate = Integer.parseInt(msg[0]);
         String format = msg[1];
 
+        // Send list of supported files
         try {
             output.writeObject(getSupportedFiles(MediaInfo.getResFromBitrate(bitrate), format));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        // Receive file name to be streamed and protocol
         try {
             msg = (String[]) input.readObject().toString().split("#");
         } catch (IOException e) {
@@ -68,8 +110,10 @@ public class ClientHandle implements Runnable {
             e.printStackTrace();
         }
 
+        String fileName = msg[0];
+        String res = msg[1];
+        String protocol = msg[2];
 
-
-
+        startStreaming(getVideoObjectFromTitle(fileName).toFileName(res, format), format, protocol);
     }
 }

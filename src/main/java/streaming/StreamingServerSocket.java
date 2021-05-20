@@ -25,6 +25,10 @@ public class StreamingServerSocket {
         return videosInfo;
     }
 
+    public int getPort() {
+        return this.port;
+    }
+
     public void start() {
         try {
             server = new ServerSocket(port);
