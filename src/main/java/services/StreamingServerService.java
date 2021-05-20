@@ -18,6 +18,7 @@ public class StreamingServerService {
     private static final Logger LOGGER = LogManager.getLogger(StreamingServerService.class);
 
     public StreamingServerService(String[] args) {
+        // Assume that working directory provided as first launch parameter
         String dir = "";
         try {
             dir = args[0];
@@ -33,6 +34,7 @@ public class StreamingServerService {
         this.videosInfo = new ArrayList<VideoInfo>();
     }
 
+    // Callback method
     public void addVideoInfo(VideoInfo videoInfo) {
         this.videosInfo.add(videoInfo);
     }
@@ -47,7 +49,7 @@ public class StreamingServerService {
                 String fileName = video.getName();
                 int pos = fileName.lastIndexOf('-');
                 String videoTitle = fileName.substring(0, pos);
-                
+
                 if (!videoTitles.contains(videoTitle)) {
                     videoTitles.add(videoTitle);
                 }
