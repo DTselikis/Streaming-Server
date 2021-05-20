@@ -43,7 +43,7 @@ public class MediaInfo {
 
         // If bitrate is greater or equal of the recommended
         for (Map.Entry<Integer, Integer[]> entry: bitrates.entrySet()) {
-            if (entry.getValue()[1] >= bitrate) {
+            if (entry.getValue()[1] <= bitrate) {
                 supportedResolutions.add(entry.getKey());
             }
         }
