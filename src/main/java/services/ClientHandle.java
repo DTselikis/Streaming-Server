@@ -41,5 +41,35 @@ public class ClientHandle implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        String[] msg = null;
+        try {
+            msg = (String[]) input.readObject().toString().split("#");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        int bitrate = Integer.parseInt(msg[0]);
+        String format = msg[1];
+
+        try {
+            output.writeObject(getSupportedFiles(MediaInfo.getResFromBitrate(bitrate), format));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            msg = (String[]) input.readObject().toString().split("#");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+
+
     }
 }
