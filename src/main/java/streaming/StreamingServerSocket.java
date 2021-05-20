@@ -3,6 +3,7 @@ package streaming;
 import res.VideoInfo;
 import services.ClientHandle;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,13 +13,16 @@ public class StreamingServerSocket {
     private ServerSocket server = null;
     private final int port;
     private final ArrayList<VideoInfo> videosInfo;
+    private final File workingDirectory;
 
-    public StreamingServerSocket(int port, ArrayList<VideoInfo> videosInfo) {
+    public StreamingServerSocket(int port, ArrayList<VideoInfo> videosInfo, File workingDirectory) {
         this.port = port;
         this.videosInfo = videosInfo;
+        this.workingDirectory = workingDirectory;
     }
-    public StreamingServerSocket(ArrayList<VideoInfo> videosInfo) {
-        this(5000, videosInfo);
+
+    public StreamingServerSocket(ArrayList<VideoInfo> videosInfo, File workingDirectory) {
+        this(5000, videosInfo, workingDirectory);
     }
 
     public ArrayList<VideoInfo> getVideoList() {
@@ -27,6 +31,10 @@ public class StreamingServerSocket {
 
     public int getPort() {
         return this.port;
+    }
+
+    public File getWorkingDirectory() {
+        return  this.workingDirectory;
     }
 
     public void start() {

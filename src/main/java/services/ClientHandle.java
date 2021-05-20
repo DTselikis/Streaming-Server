@@ -3,11 +3,10 @@ package services;
 import res.MediaInfo;
 import res.VideoInfo;
 import streaming.StreamingServerSocket;
+import services.FileServer;
 
 import javax.print.attribute.standard.Media;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -154,5 +153,21 @@ public class ClientHandle implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        if (protocol.equals("RTP")) {
+            try {
+                new FileServer(server.getWorkingDirectory() + response, socket.getOutputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            input.close();
+            output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
