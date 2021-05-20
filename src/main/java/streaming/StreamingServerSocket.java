@@ -38,10 +38,10 @@ public class StreamingServerSocket {
     }
 
     public void start() {
-        int port = 50000;
+        int clientPort = 50000;
 
         try {
-            server = new ServerSocket(port);
+            server = new ServerSocket(this.port);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,10 +55,10 @@ public class StreamingServerSocket {
                 e.printStackTrace();
             }
 
-            new Thread(new ClientHandle(this, clientSocket, port)).start();
+            new Thread(new ClientHandle(this, clientSocket, clientPort)).start();
 
             // In case there will be an RTP streaming
-            port += 2;
+            clientPort += 2;
         }
 
     }
