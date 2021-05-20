@@ -1,6 +1,8 @@
 package res;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class MediaInfo {
@@ -36,8 +38,17 @@ public class MediaInfo {
         return bitrates.get(res);
     }
 
-    public static Integer getResBitrate(Integer res, int bitrate) {
-        return bitrates.get(res)[bitrate];
+    public static ArrayList<Integer> getResFromBitrate(int bitrate) {
+        ArrayList<Integer> supportedResolutions = new ArrayList<Integer>();
+
+        // If bitrate is greater or equal of the recommended
+        for (Map.Entry<Integer, Integer[]> entry: bitrates.entrySet()) {
+            if (entry.getValue()[1] >= bitrate) {
+                supportedResolutions.add(entry.getKey());
+            }
+        }
+
+        return supportedResolutions;
     }
 
     public static Set<Integer> getResolutions() {
