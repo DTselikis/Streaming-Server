@@ -3,9 +3,7 @@ package services;
 import res.MediaInfo;
 import res.VideoInfo;
 import streaming.StreamingServerSocket;
-import services.FileServer;
 
-import javax.print.attribute.standard.Media;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class ClientHandle implements Runnable {
     }
 
     private String startStreaming(String filePath, String format, String protocol) {
-        ProcessBuilder cmd = null;
+        ProcessBuilder cmd;
         ArrayList<String> args = new ArrayList<String>();
         args.add("C:\\Users\\Louk\\Downloads\\ffmpeg\\ffmpeg.exe");
 
@@ -49,14 +47,14 @@ public class ClientHandle implements Runnable {
         switch (protocol) {
             case "UDP": {
                 args.add("-f" + format);
-                args.add("udp://" + LOCALHOST + ":" +  String.valueOf(this.port));
+                args.add("udp://" + LOCALHOST + ":" +  this.port);
 
                 response = String.valueOf(this.port);
                 break;
             }
             case "TCP": {
                 args.add("-f" + format);
-                args.add("tcp://" + LOCALHOST + ":" + String.valueOf(this.port) + "?listen");
+                args.add("tcp://" + LOCALHOST + ":" + this.port + "?listen");
 
                 response = String.valueOf(this.port);
                 break;
@@ -68,10 +66,10 @@ public class ClientHandle implements Runnable {
 
                 int pos = filePath.lastIndexOf('\\');
                 int extPos = filePath.indexOf('.');
-                String sdpFile = filePath.substring(pos+1, extPos) + "_" + String.valueOf(this.port) + ".sdp";
+                String sdpFile = filePath.substring(pos+1, extPos) + "_" + this.port + ".sdp";
 
                 args.add("-sdp_file " + sdpFile);
-                args.add("\"" + LOCALHOST + ":" + String.valueOf(this.port) + "\"");
+                args.add("\"" + LOCALHOST + ":" + this.port + "\"");
 
                 response = sdpFile;
             }
@@ -90,7 +88,7 @@ public class ClientHandle implements Runnable {
 
     private VideoInfo getVideoObjectFromTitle(String title) {
         for (VideoInfo video : server.getVideoList()) {
-            if (video.getTitle().equals("title")) {
+            if (video.getTitle().equals(title)) {
                 return video;
             }
         }
@@ -114,7 +112,7 @@ public class ClientHandle implements Runnable {
 
         // Receive bitrate and format from client
         try {
-            msg = (String[]) input.readObject().toString().split("#");
+            msg = input.readObject().toString().split("#");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -133,7 +131,7 @@ public class ClientHandle implements Runnable {
 
         // Receive file name to be streamed and protocol
         try {
-            msg = (String[]) input.readObject().toString().split("#");
+            msg = input.readObject().toString().split("#");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

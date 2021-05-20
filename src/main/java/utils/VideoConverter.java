@@ -11,18 +11,18 @@ import java.io.IOException;
 
 public class VideoConverter implements Runnable {
 
-    private final Integer targerRes;
-    private final String targerContainer;
+    private final Integer targetRes;
+    private final String targetContainer;
     private final File source;
 
-    public VideoConverter(Integer targerRes, String targerContainer, File source) {
-        this.targerRes = targerRes;
-        this.targerContainer = targerContainer;
+    public VideoConverter(Integer targetRes, String targetContainer, File source) {
+        this.targetRes = targetRes;
+        this.targetContainer = targetContainer;
         this.source = source;
     }
 
-    public VideoConverter(String targetRes, String targerContainer, File source) {
-        this(Integer.valueOf(targetRes), targerContainer, source);
+    public VideoConverter(String targetRes, String targetContainer, File source) {
+        this(Integer.valueOf(targetRes), targetContainer, source);
     }
 
     @Override
@@ -33,9 +33,9 @@ public class VideoConverter implements Runnable {
 
         int resPos = source.toString().indexOf('-');
         StringBuilder dest = new StringBuilder();
-        dest.append(source.toString().substring(0, resPos + 1)).append(targerRes).append("p.").append(targerContainer);
+        dest.append(source.toString().substring(0, resPos + 1)).append(targetRes).append("p.").append(targetContainer);
 
-        Integer[] resolution = MediaInfo.getResolution(targerRes);
+        Integer[] resolution = MediaInfo.getResolution(targetRes);
 
         try {
              ffmpeg = new FFmpeg("C:\\Users\\Louk\\Downloads\\ffmpeg\\ffmpeg.exe");
@@ -47,7 +47,7 @@ public class VideoConverter implements Runnable {
         builder = new FFmpegBuilder()
                 .setInput(source.toString())
                 .addOutput(dest.toString())
-                .setFormat((targerContainer.equals("mkv") ? "matroska" : targerContainer))
+                .setFormat((targetContainer.equals("mkv") ? "matroska" : targetContainer))
                 .setVideoResolution(resolution[0], resolution[1])
                 .done();
 

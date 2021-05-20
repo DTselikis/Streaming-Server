@@ -27,8 +27,7 @@ public class VideoInfo {
             ArrayList<String> resFormats = formats.get(res);
 
             if (resFormats != null) {
-                int pos;
-                if ((pos = resFormats.indexOf(format)) != -1) {
+                if ((resFormats.contains(format))) {
                     resolutions.add(res);
                 }
             }
