@@ -3,6 +3,7 @@ package services;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import res.VideoInfo;
+import streaming.StreamingServerSocket;
 import utils.VideoExtensionFileFilter;
 import utils.VideoManager;
 
@@ -60,10 +61,27 @@ public class StreamingServerService {
 
         ServerServiceCallback callback = new ServerServiceCallback(this);
 
+        Thread[] videoManagers = new Thread[videoTitles.size()];
+
+        int i = 0;
         // Start a VideoManager for each unique video title
         for (String videoTitle : videoTitles) {
-            new Thread(new VideoManager(videoTitle, workingDirectory, callback)).start();
+            videoManagers[i] = new Thread(new VideoManager(videoTitle, workingDirectory, callback));
+            videoManagers[i].start();
+
+            i++;
         }
+
+        for (Thread thread : videoManagers) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Server will listen for clients after all convertions have ended
+        new StreamingServerSocket(5000, videosInfo, workingDirectory);
 
 
         return 0;
