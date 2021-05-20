@@ -46,14 +46,14 @@ public class ClientHandle implements Runnable {
         String response = "";
         switch (protocol) {
             case "UDP": {
-                args.add("-f" + format);
+                args.add("-f " + format);
                 args.add("udp://" + LOCALHOST + ":" +  this.port);
 
                 response = String.valueOf(this.port);
                 break;
             }
             case "TCP": {
-                args.add("-f" + format);
+                args.add("-f " + format);
                 args.add("tcp://" + LOCALHOST + ":" + this.port + "?listen");
 
                 response = String.valueOf(this.port);
@@ -73,14 +73,14 @@ public class ClientHandle implements Runnable {
 
                 response = sdpFile;
             }
+        }
 
-            cmd = new ProcessBuilder(args);
+        cmd = new ProcessBuilder(args);
 
-            try {
-                cmd.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            cmd.start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return response;
