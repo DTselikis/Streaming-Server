@@ -15,12 +15,14 @@ import java.util.HashMap;
 public class ClientHandle implements Runnable {
     private final StreamingServerSocket server;
     private final Socket socket;
+    private final int port;
 
     private final String LOCALHOST = "127.0.0.1";
 
-    public ClientHandle(StreamingServerSocket server, Socket socket) {
+    public ClientHandle(StreamingServerSocket server, Socket socket, int port) {
         this.server = server;
         this.socket = socket;
+        this.port = port;
     }
 
     private HashMap<String, ArrayList<Integer>> getSupportedFiles(ArrayList<Integer> supportedResolutions, String format) {
@@ -47,11 +49,11 @@ public class ClientHandle implements Runnable {
 
         switch (protocol) {
             case "UDP": {
-                args.add("udp://" + LOCALHOST + String.valueOf(server.getPort()));
+                args.add("udp://" + LOCALHOST + String.valueOf(this.port));
                 break;
             }
             case "TCP": {
-                args.add("tcp://" + LOCALHOST + String.valueOf(server.getPort()) + "?listen");
+                args.add("tcp://" + LOCALHOST + String.valueOf(this.port) + "?listen");
                 break;
             }
         }
