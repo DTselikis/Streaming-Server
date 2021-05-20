@@ -83,7 +83,7 @@ public class StreamingServerService {
         }
 
         // Server will listen for clients after all convertions have ended
-        new StreamingServerSocket(5000, videosInfo, workingDirectory);
+        new StreamingServerSocket(5000, videosInfo, workingDirectory).start();
 
 
         return 0;
