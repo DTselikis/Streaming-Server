@@ -35,30 +35,58 @@ public class ClientHandle implements Runnable {
         return supportedFiles;
     }
 
-    private short startStreaming(String filePath, String format, String protocol) {
+    private String startStreaming(String filePath, String format, String protocol) {
         ProcessBuilder cmd = null;
         ArrayList<String> args = new ArrayList<String>();
         args.add("C:\\Users\\Louk\\Downloads\\ffmpeg\\ffmpeg.exe");
 
-        if (protocol.equals("UDP")) {
+        if (protocol.equals("UDP") || protocol.equals("RTP")) {
             args.add("-re");
         }
 
         args.add("-i " + filePath);
-        args.add("-f" + format);
 
+        String response = "";
         switch (protocol) {
             case "UDP": {
-                args.add("udp://" + LOCALHOST + String.valueOf(this.port));
+                args.add("-f" + format);
+                args.add("udp://" + LOCALHOST + ":" +  String.valueOf(this.port));
+
+                response = String.valueOf(this.port);
                 break;
             }
             case "TCP": {
-                args.add("tcp://" + LOCALHOST + String.valueOf(this.port) + "?listen");
+                args.add("-f" + format);
+                args.add("tcp://" + LOCALHOST + ":" + String.valueOf(this.port) + "?listen");
+
+                response = String.valueOf(this.port);
                 break;
+            }
+            case "RTP": {
+                args.add("-c:v");
+                args.add("copy");
+                args.add("-f rtp");
+
+                int pos = filePath.lastIndexOf('\\');
+                int extPos = filePath.indexOf('.');
+                String sdpFile = filePath.substring(pos+1, extPos) + "_" + String.valueOf(this.port) + ".sdp";
+
+                args.add("-sdp_file " + sdpFile);
+                args.add("\"" + LOCALHOST + ":" + String.valueOf(this.port) + "\"");
+
+                response = sdpFile;
+            }
+
+            cmd = new ProcessBuilder(args);
+
+            try {
+                cmd.start();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
-        return 1;
+        return response;
     }
 
     private VideoInfo getVideoObjectFromTitle(String title) {
@@ -75,6 +103,7 @@ public class ClientHandle implements Runnable {
     public void run() {
         ObjectInputStream input = null;
         ObjectOutputStream output = null;
+
         try {
             input = new ObjectInputStream(socket.getInputStream());
             output = new ObjectOutputStream(socket.getOutputStream());
@@ -116,6 +145,14 @@ public class ClientHandle implements Runnable {
         String res = msg[1];
         String protocol = msg[2];
 
-        startStreaming(getVideoObjectFromTitle(fileName).toFileName(res, format), format, protocol);
+        String response;
+        response = startStreaming(getVideoObjectFromTitle(fileName).toFileName(res, format), format, protocol);
+
+        // Notify client to start playing
+        try {
+            output.writeObject(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
