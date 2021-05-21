@@ -38,7 +38,7 @@ public class StreamingServerSocket {
     }
 
     public void start() {
-        int clientPort = 50000;
+        int clientPort = 5001;
 
         try {
             server = new ServerSocket(this.port);
