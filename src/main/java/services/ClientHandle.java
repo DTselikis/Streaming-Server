@@ -152,16 +152,23 @@ public class ClientHandle implements Runnable {
         String response;
         response = startStreaming(getVideoObjectFromTitle(fileName).toFileName(res, format), format, protocol);
 
-        // Notify client to start playing
-        try {
-            output.writeObject(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        // For RTP protocol the rest of the communication will
+        // be handled by FileServer
         if (protocol.equals("RTP")) {
+            OutputStream outStream = null;
             try {
-                new FileServer(server.getWorkingDirectory() + response, socket.getOutputStream());
+                outStream = socket.getOutputStream();
+                new FileServer(response, output, outStream).transmit();
+                outStream.close();
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        else {
+            // Notify client to start playing
+            try {
+                output.writeObject(response);
             } catch (IOException e) {
                 e.printStackTrace();
             }
