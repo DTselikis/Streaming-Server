@@ -41,19 +41,22 @@ public class ClientHandle implements Runnable {
             args.add("-re");
         }
 
-        args.add("-i " + filePath);
+        args.add("-i");
+        args.add("C:\\Users\\Louk\\IdeaProjects\\StreamingServer\\vid\\" + filePath);
 
         String response = "";
         switch (protocol) {
             case "UDP": {
-                args.add("-f " + format);
+                args.add("-f");
+                args.add(format);
                 args.add("udp://" + LOCALHOST + ":" +  this.port);
 
                 response = String.valueOf(this.port);
                 break;
             }
             case "TCP": {
-                args.add("-f " + format);
+                args.add("-f");
+                args.add(format);
                 args.add("tcp://" + LOCALHOST + ":" + this.port + "?listen");
 
                 response = String.valueOf(this.port);
@@ -68,7 +71,8 @@ public class ClientHandle implements Runnable {
                 int extPos = filePath.indexOf('.');
                 String sdpFile = filePath.substring(pos+1, extPos) + "_" + this.port + ".sdp";
 
-                args.add("-sdp_file " + sdpFile);
+                args.add("-sdp_file");
+                args.add(sdpFile);
                 args.add("\"" + LOCALHOST + ":" + this.port + "\"");
 
                 response = sdpFile;
