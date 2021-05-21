@@ -63,17 +63,20 @@ public class ClientHandle implements Runnable {
                 break;
             }
             case "RTP": {
+                args.add("-an");
                 args.add("-c:v");
                 args.add("copy");
-                args.add("-f rtp");
+                args.add("-f");
+                args.add("rtp");
 
+                // Full path to the file in file system
                 int pos = filePath.lastIndexOf('\\');
                 int extPos = filePath.indexOf('.');
-                String sdpFile = filePath.substring(pos+1, extPos) + "_" + this.port + ".sdp";
+                String sdpFile = server.getWorkingDirectory() + "\\" + filePath.substring(pos+1, extPos) + "_" + this.port + ".sdp";
 
                 args.add("-sdp_file");
                 args.add(sdpFile);
-                args.add("\"" + LOCALHOST + ":" + this.port + "\"");
+                args.add("\"rtp://" + LOCALHOST + ":" + this.port + "\"");
 
                 response = sdpFile;
             }
@@ -82,7 +85,7 @@ public class ClientHandle implements Runnable {
         cmd = new ProcessBuilder(args);
 
         try {
-            cmd.start();
+            cmd.inheritIO().start();
         } catch (IOException e) {
             e.printStackTrace();
         }
