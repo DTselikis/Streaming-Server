@@ -7,13 +7,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainController">
    <children>
       <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
             <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" stylesheets="@style.css" text="Start" />
+                  <Button fx:id="start_btn" mnemonicParsing="false" onAction="#start_btn_onClick" stylesheets="@style.css" text="Start" />
                   <Button mnemonicParsing="false" stylesheets="@style.css" text="Stop" />
                </children>
             </HBox>
@@ -23,14 +23,14 @@
                <children>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <TextField promptText="Root directory" />
-                        <Button mnemonicParsing="false" text="Browse" />
+                        <TextField fx:id="rootDir_tf" promptText="Root directory" />
+                        <Button fx:id="root_browse_btn" mnemonicParsing="false" onAction="#root_browse_btn_onClick" text="Browse" />
                      </children>
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <TextField promptText="FFMPEG tools directory" />
-                        <Button mnemonicParsing="false" text="Browse" />
+                        <TextField fx:id="ffmpeg_tf" promptText="FFMPEG tools directory" />
+                        <Button fx:id="ffmpeg_browse_btn" mnemonicParsing="false" onAction="#ffmpeg_browse_btn_onClick" text="Browse" />
                      </children>
                   </HBox>
                </children>
