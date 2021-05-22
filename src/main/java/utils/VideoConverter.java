@@ -1,5 +1,7 @@
 package utils;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
@@ -14,6 +16,9 @@ public class VideoConverter implements Runnable {
     private final Integer targetRes;
     private final String targetContainer;
     private final File source;
+
+    @FXML
+    private TextField ffmpeg_tf;
 
     public VideoConverter(Integer targetRes, String targetContainer, File source) {
         this.targetRes = targetRes;
@@ -38,8 +43,8 @@ public class VideoConverter implements Runnable {
         Integer[] resolution = MediaInfo.getResolution(targetRes);
 
         try {
-             ffmpeg = new FFmpeg("C:\\Users\\Louk\\Downloads\\ffmpeg\\ffmpeg.exe");
-             ffprobe = new FFprobe("C:\\Users\\Louk\\Downloads\\ffmpeg\\ffprobe.exe");
+             ffmpeg = new FFmpeg(ffmpeg_tf.getText() + "\\ffmpeg.exe");
+             ffprobe = new FFprobe(ffmpeg_tf.getText() + "\\ffprobe.exe");
         } catch (IOException e) {
             e.printStackTrace();
         }

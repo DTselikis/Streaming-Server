@@ -1,5 +1,7 @@
 package services;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import res.VideoInfo;
@@ -17,15 +19,14 @@ public class StreamingServerService {
 
     private static final Logger LOGGER = LogManager.getLogger(StreamingServerService.class);
 
-    public StreamingServerService(String[] args) {
+    public StreamingServerService(String rootDirectory) {
         // Assume that working directory provided as first launch parameter
         String dir = "";
         try {
-            dir = args[0];
+            dir = rootDirectory;
         }
         catch (IndexOutOfBoundsException ex) {
-            LOGGER.info("Working directory was not provided. Using launch directory...");
-            dir = System.getProperty("user.dir");
+            LOGGER.error("Working directory was not provided.");
         }
         finally {
             workingDirectory = new File(dir);
