@@ -12,7 +12,7 @@ import utils.VideoManager;
 import java.io.File;
 import java.util.ArrayList;
 
-public class StreamingServerService {
+public class StreamingServerService implements Runnable{
     private final File workingDirectory;
     private ArrayList<String> videoTitles;
     private ArrayList<VideoInfo> videosInfo;
@@ -30,7 +30,8 @@ public class StreamingServerService {
         this.videosInfo.add(videoInfo);
     }
 
-    public int start() {
+    @Override
+    public void run() {
         videoTitles = new ArrayList<String>();
         try {
             String[] filters = {".avi", ".mp4", ".mkv"};
@@ -48,8 +49,6 @@ public class StreamingServerService {
         }
         catch (Exception ex) {
             LOGGER.error(ex.getMessage());
-
-            return 1;
         }
 
         ServerServiceCallback callback = new ServerServiceCallback(this);
@@ -79,8 +78,5 @@ public class StreamingServerService {
 
         // Server will listen for clients after all convertions have ended
         new StreamingServerSocket(5000, videosInfo, workingDirectory).start();
-
-
-        return 0;
     }
 }
