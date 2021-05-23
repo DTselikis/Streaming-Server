@@ -60,6 +60,7 @@ public class StreamingServerSocket {
             Socket clientSocket = null;
 
             try {
+                LOGGER.info("Listening for clients...");
                 clientSocket = server.accept();
                 LOGGER.info("New client accepted!");
             } catch (IOException e) {

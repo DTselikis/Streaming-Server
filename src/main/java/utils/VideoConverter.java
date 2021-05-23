@@ -65,11 +65,11 @@ public class VideoConverter implements Runnable {
 
         FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
 
-        LOGGER.info("Converting " + builder.toString());
+        LOGGER.info("Converting " + dest.toString());
 
         // Run a one-pass encode
         executor.createJob(builder).run();
 
-        LOGGER.info("Convertion for " + builder.toString() + "ended");
+        LOGGER.info("Convertion for " + dest.toString() + "ended");
     }
 }
