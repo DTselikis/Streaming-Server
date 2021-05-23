@@ -4,12 +4,15 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="[%level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
         </Console>
+        <TextAreaAppender name="TextArea">
+            <PatternLayout pattern="[%level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+        </TextAreaAppender>
     </Appenders>
     <Loggers>
-        <Logger name="StreamingServer" level="ALL" additivity="false">
-            <AppenderRef ref="console"/>
+        <Logger name="controllers.MainController" level="ALL" additivity="false">
+            <AppenderRef ref="TextArea"/>
         </Logger>
-        <Root level="all" additivity="true">
+        <Root level="OFF" additivity="true">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
