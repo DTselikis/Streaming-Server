@@ -52,7 +52,7 @@ public class ClientHandle implements Runnable {
         switch (protocol) {
             case "UDP": {
                 args.add("-f");
-                args.add(format);
+                args.add("mpegts");
                 args.add("udp://" + LOCALHOST + ":" +  this.port);
 
                 response = String.valueOf(this.port);
@@ -60,7 +60,7 @@ public class ClientHandle implements Runnable {
             }
             case "TCP": {
                 args.add("-f");
-                args.add(format);
+                args.add("mpegts");
                 args.add("tcp://" + LOCALHOST + ":" + this.port + "?listen");
 
                 response = String.valueOf(this.port);
