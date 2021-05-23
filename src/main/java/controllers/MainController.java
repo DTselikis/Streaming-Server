@@ -73,8 +73,9 @@ public class MainController {
         }
         else {
             LOGGER.info("Starting streaming server service...");
-            StreamingServerService service = new StreamingServerService(rootDirectory);
-            service.start();
+            Thread thread = new Thread(new StreamingServerService(rootDirectory));
+            thread.setDaemon(true);
+            thread.start();
         }
     }
 }
