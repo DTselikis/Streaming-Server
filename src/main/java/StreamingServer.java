@@ -16,6 +16,7 @@ public class StreamingServer extends Application {
         TextAreaAppender.textArea = (TextArea) scene.lookup("#loggingTA");
 
         stage.setScene(scene);
+        stage.setTitle("Streaming server");
         stage.show();
     }
 
