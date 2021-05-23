@@ -14,13 +14,15 @@ import java.util.ArrayList;
 
 public class StreamingServerService implements Runnable{
     private final File workingDirectory;
+    private final String ffmpegDirectory;
     private ArrayList<String> videoTitles;
     private ArrayList<VideoInfo> videosInfo;
 
     private static final Logger LOGGER = LogManager.getLogger(StreamingServerService.class);
 
-    public StreamingServerService(String rootDirectory) {
-        workingDirectory = new File(rootDirectory);
+    public StreamingServerService(String rootDirectory, String ffmpegDirectory) {
+        this.workingDirectory = new File(rootDirectory);
+        this.ffmpegDirectory = ffmpegDirectory;
 
         this.videosInfo = new ArrayList<VideoInfo>();
     }
@@ -58,7 +60,7 @@ public class StreamingServerService implements Runnable{
         int i = 0;
         // Start a VideoManager for each unique video title
         for (String videoTitle : videoTitles) {
-            videoManagers[i] = new Thread(new VideoManager(videoTitle, workingDirectory, callback));
+            videoManagers[i] = new Thread(new VideoManager(videoTitle, workingDirectory, callback, ffmpegDirectory));
             videoManagers[i].start();
 
             i++;
@@ -77,6 +79,6 @@ public class StreamingServerService implements Runnable{
         LOGGER.info("All video managers threads was ended.");
 
         // Server will listen for clients after all convertions have ended
-        new StreamingServerSocket(5000, videosInfo, workingDirectory).start();
+        new StreamingServerSocket(5000, videosInfo, workingDirectory, ffmpegDirectory).start();
     }
 }

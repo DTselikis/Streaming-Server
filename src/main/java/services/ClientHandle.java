@@ -8,6 +8,7 @@ import streaming.StreamingServerSocket;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,15 +16,19 @@ public class ClientHandle implements Runnable {
     private final StreamingServerSocket server;
     private final Socket socket;
     private final int port;
+    private final String workingDirectory;
+    private final String ffmpegDirectory;
 
     private final String LOCALHOST = "127.0.0.1";
 
     private static final Logger LOGGER = LogManager.getLogger(ClientHandle.class);
 
-    public ClientHandle(StreamingServerSocket server, Socket socket, int port) {
+    public ClientHandle(StreamingServerSocket server, Socket socket, int port, String workingDirectory, String ffmpegDirectory) {
         this.server = server;
         this.socket = socket;
         this.port = port;
+        this.workingDirectory = workingDirectory;
+        this.ffmpegDirectory = ffmpegDirectory;
     }
 
     private HashMap<String, ArrayList<Integer>> getSupportedFiles(ArrayList<Integer> supportedResolutions, String format) {
@@ -39,14 +44,14 @@ public class ClientHandle implements Runnable {
     private String startStreaming(String filePath, String format, String protocol) {
         ProcessBuilder cmd;
         ArrayList<String> args = new ArrayList<String>();
-        args.add("C:\\Users\\Louk\\Downloads\\ffmpeg\\ffmpeg.exe");
+        args.add(Paths.get(ffmpegDirectory, "ffmpeg.exe").toString());
 
         if (protocol.equals("UDP") || protocol.equals("RTP")) {
             args.add("-re");
         }
 
         args.add("-i");
-        args.add("C:\\Users\\Louk\\IdeaProjects\\StreamingServer\\vid\\" + filePath);
+        args.add(Paths.get(workingDirectory, filePath).toString());
 
         String response = "";
         switch (protocol) {

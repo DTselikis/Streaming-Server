@@ -1,5 +1,6 @@
 package streaming;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import res.VideoInfo;
@@ -17,17 +18,19 @@ public class StreamingServerSocket {
     private final int port;
     private final ArrayList<VideoInfo> videosInfo;
     private final File workingDirectory;
+    private final String ffmpegDirectory;
 
     private static final Logger LOGGER = LogManager.getLogger(StreamingServerSocket.class);
 
-    public StreamingServerSocket(int port, ArrayList<VideoInfo> videosInfo, File workingDirectory) {
+    public StreamingServerSocket(int port, ArrayList<VideoInfo> videosInfo, File workingDirectory, String ffmpegDirectory) {
         this.port = port;
         this.videosInfo = videosInfo;
         this.workingDirectory = workingDirectory;
+        this.ffmpegDirectory = ffmpegDirectory;
     }
 
-    public StreamingServerSocket(ArrayList<VideoInfo> videosInfo, File workingDirectory) {
-        this(5000, videosInfo, workingDirectory);
+    public StreamingServerSocket(ArrayList<VideoInfo> videosInfo, File workingDirectory, String ffmpegDirectory) {
+        this(5000, videosInfo, workingDirectory, ffmpegDirectory);
     }
 
     public ArrayList<VideoInfo> getVideoList() {
@@ -64,7 +67,7 @@ public class StreamingServerSocket {
                 e.printStackTrace();
             }
 
-            new Thread(new ClientHandle(this, clientSocket, clientPort)).start();
+            new Thread(new ClientHandle(this, clientSocket, clientPort, workingDirectory.toString(), ffmpegDirectory)).start();
 
             // In case there will be an RTP streaming
             clientPort += 2;

@@ -12,26 +12,29 @@ import res.MediaInfo;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class VideoConverter implements Runnable {
 
     private final Integer targetRes;
     private final String targetContainer;
     private final File source;
+    private final String ffmpegDirectory;
 
     private static final Logger LOGGER = LogManager.getLogger(VideoConverter.class);
 
     @FXML
     private TextField ffmpeg_tf;
 
-    public VideoConverter(Integer targetRes, String targetContainer, File source) {
+    public VideoConverter(Integer targetRes, String targetContainer, File source, String ffmpegDirectory) {
         this.targetRes = targetRes;
         this.targetContainer = targetContainer;
         this.source = source;
+        this.ffmpegDirectory = ffmpegDirectory;
     }
 
-    public VideoConverter(String targetRes, String targetContainer, File source) {
-        this(Integer.valueOf(targetRes), targetContainer, source);
+    public VideoConverter(String targetRes, String targetContainer, File source, String ffmpegDirectory) {
+        this(Integer.valueOf(targetRes), targetContainer, source, ffmpegDirectory);
     }
 
     @Override
@@ -47,8 +50,8 @@ public class VideoConverter implements Runnable {
         Integer[] resolution = MediaInfo.getResolution(targetRes);
 
         try {
-             ffmpeg = new FFmpeg(ffmpeg_tf.getText() + "\\ffmpeg.exe");
-             ffprobe = new FFprobe(ffmpeg_tf.getText() + "\\ffprobe.exe");
+             ffmpeg = new FFmpeg(Paths.get(ffmpegDirectory, "ffmpeg.exe").toString());
+             ffprobe = new FFprobe(Paths.get(ffmpegDirectory, "ffprobe.exe").toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

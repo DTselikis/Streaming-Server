@@ -73,7 +73,7 @@ public class MainController {
         }
         else {
             LOGGER.info("Starting streaming server service...");
-            Thread thread = new Thread(new StreamingServerService(rootDirectory));
+            Thread thread = new Thread(new StreamingServerService(rootDirectory, ffmpeg_tf.getText()));
             thread.setDaemon(true);
             thread.start();
         }

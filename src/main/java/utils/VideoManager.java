@@ -15,6 +15,7 @@ public class VideoManager implements Runnable {
 
     private final String videoTitle;
     private final File workingDirectory;
+    private final String ffmpegDirectory;
     private final ServerServiceCallback callback;
     private File sourceFile;
     private HashMap<Integer, ArrayList<String>> formats = null;
@@ -43,10 +44,11 @@ public class VideoManager implements Runnable {
         }
     };
 
-    public VideoManager(String videoTitle, File workingDirectory, ServerServiceCallback callback) {
+    public VideoManager(String videoTitle, File workingDirectory, ServerServiceCallback callback, String ffmpegDirectory) {
         this.videoTitle = videoTitle;
         this.workingDirectory = workingDirectory;
         this.callback = callback;
+        this.ffmpegDirectory = ffmpegDirectory;
     }
 
     private void checkMissing() {
@@ -133,7 +135,7 @@ public class VideoManager implements Runnable {
         int i = 0;
         // For each missing file create a new thread for the convertion
         for (String[] missingFile : missingFiles) {
-            threads[i] = new Thread(new VideoConverter(Integer.valueOf(missingFile[0]), missingFile[1], sourceFile));
+            threads[i] = new Thread(new VideoConverter(Integer.valueOf(missingFile[0]), missingFile[1], sourceFile, ffmpegDirectory));
             threads[i].start();
 
             addFormat(missingFile[0], missingFile[1]);
