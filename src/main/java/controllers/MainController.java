@@ -7,11 +7,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import services.StreamingServerService;
 
 import java.io.File;
 
 public class MainController {
+    private static final Logger LOGGER = LogManager.getLogger(MainController.class);
 
     @FXML
     private Button root_browse_btn;
@@ -29,6 +32,8 @@ public class MainController {
 
         if (file != null) {
             ffmpeg_tf.setText(file.getAbsolutePath());
+
+            LOGGER.info("FFmpeg directory was setted to: " + file.getAbsolutePath());
         }
     }
 
@@ -39,6 +44,8 @@ public class MainController {
 
         if (file != null) {
             rootDir_tf.setText(file.getAbsolutePath());
+
+            LOGGER.info("Root directory was setted to: " + file.getAbsolutePath());
         }
     }
 
@@ -51,6 +58,8 @@ public class MainController {
             alert.setHeaderText(null);
             alert.setContentText("Please provide ffmpeg/ffprobe directory!");
             alert.showAndWait();
+
+            LOGGER.warn("FFmpeg directory not provided!");
         }
 
         if (rootDirectory.equals("")) {
@@ -59,8 +68,11 @@ public class MainController {
             alert.setHeaderText(null);
             alert.setContentText("Please provide a root directory!");
             alert.showAndWait();
+
+            LOGGER.warn("Root directory not provided!");
         }
         else {
+            LOGGER.info("Starting streaming server service...");
             StreamingServerService service = new StreamingServerService(rootDirectory);
             service.start();
         }

@@ -1,8 +1,11 @@
 package utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import res.MediaInfo;
 import res.VideoInfo;
 import services.ServerServiceCallback;
+import services.StreamingServerService;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,6 +18,8 @@ public class VideoManager implements Runnable {
     private final ServerServiceCallback callback;
     private File sourceFile;
     private HashMap<Integer, ArrayList<String>> formats = null;
+
+    private static final Logger LOGGER = LogManager.getLogger(VideoManager.class);
 
     private ArrayList<String[]> missingFiles = new ArrayList<String[]>() {
         {
@@ -61,7 +66,8 @@ public class VideoManager implements Runnable {
                 missingFiles.remove(findIndex(res, container));
             }
             catch (IndexOutOfBoundsException ex) {
-                ex.getMessage();
+                LOGGER.error(ex.getMessage());
+                ex.printStackTrace();
             }
 
 
@@ -142,8 +148,11 @@ public class VideoManager implements Runnable {
             try {
                 thread.join();
             } catch (InterruptedException e) {
+                LOGGER.error(e.getMessage());
                 e.printStackTrace();
             }
         }
+
+        LOGGER.info("All video convertions ended.");
     }
 }

@@ -20,17 +20,7 @@ public class StreamingServerService {
     private static final Logger LOGGER = LogManager.getLogger(StreamingServerService.class);
 
     public StreamingServerService(String rootDirectory) {
-        // Assume that working directory provided as first launch parameter
-        String dir = "";
-        try {
-            dir = rootDirectory;
-        }
-        catch (IndexOutOfBoundsException ex) {
-            LOGGER.error("Working directory was not provided.");
-        }
-        finally {
-            workingDirectory = new File(dir);
-        }
+        workingDirectory = new File(rootDirectory);
 
         this.videosInfo = new ArrayList<VideoInfo>();
     }
@@ -73,6 +63,8 @@ public class StreamingServerService {
             videoManagers[i].start();
 
             i++;
+
+            LOGGER.info("Video manager " + i + "started.");
         }
 
         for (Thread thread : videoManagers) {
@@ -82,6 +74,8 @@ public class StreamingServerService {
                 e.printStackTrace();
             }
         }
+
+        LOGGER.info("All video managers threads was ended.");
 
         // Server will listen for clients after all convertions have ended
         new StreamingServerSocket(5000, videosInfo, workingDirectory).start();

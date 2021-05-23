@@ -1,5 +1,8 @@
 package services;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,6 +12,8 @@ public class FileServer {
     private final ObjectOutputStream objectOutputStream;
     private final OutputStream socketStream;
 
+    private static final Logger LOGGER = LogManager.getLogger(FileServer.class);
+
     public FileServer(String filePath, ObjectOutputStream objectOutputStream, OutputStream socketStream) {
         this.filePath = filePath;
         this.objectOutputStream = objectOutputStream;
@@ -16,6 +21,7 @@ public class FileServer {
     }
 
     public void transmit() {
+        LOGGER.info("New FileServer initialized.");
         File rdp = new File(filePath);
 
         byte[] fileBytes = new byte[(int) rdp.length()];
@@ -27,9 +33,13 @@ public class FileServer {
             fileBuff.read(fileBytes, 0, fileBytes.length);
 
             fileStream = new DataOutputStream(socketStream);
+
+            LOGGER.info("Completed reading file: " + rdp.getName());
         } catch (FileNotFoundException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
 
@@ -39,13 +49,17 @@ public class FileServer {
             int pos = filePath.lastIndexOf('\\') + 1;
             objectOutputStream.writeObject(filePath.substring(pos, filePath.length()) + "#" + fileBytes.length);
             fileStream.write(fileBytes, 0, fileBytes.length);
+
+            LOGGER.info("File sent! File: " + rdp.getName());
         } catch (IOException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
         finally {
             try {
                 fileBuff.close();
             } catch (IOException e) {
+                LOGGER.error(e.getMessage());
                 e.printStackTrace();
             }
         }

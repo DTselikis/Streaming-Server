@@ -12,6 +12,24 @@
         <Logger name="controllers.MainController" level="ALL" additivity="false">
             <AppenderRef ref="TextArea"/>
         </Logger>
+        <Logger name="services.StreamingServerService" level="ALL" additivity="false">
+            <AppenderRef ref="TextArea"/>
+        </Logger>
+        <Logger name="utils.VideoManager" level="ALL" additivity="false">
+            <AppenderRef ref="TextArea"/>
+        </Logger>
+        <Logger name="utils.VideoConverter" level="ALL" additivity="false">
+            <AppenderRef ref="TextArea"/>
+        </Logger>
+        <Logger name="streaming.StreamingServerSocket" level="ALL" additivity="false">
+            <AppenderRef ref="TextArea"/>
+        </Logger>
+        <Logger name="services.ClientHandle" level="ALL" additivity="false">
+            <AppenderRef ref="TextArea"/>
+        </Logger>
+        <Logger name="services.FileServer" level="ALL" additivity="false">
+            <AppenderRef ref="TextArea"/>
+        </Logger>
         <Root level="OFF" additivity="true">
             <AppenderRef ref="console"/>
         </Root>

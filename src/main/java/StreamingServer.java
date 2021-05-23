@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import utils.TextAreaAppender;
 
 public class StreamingServer extends Application {
-    private static final Logger LOGGER = LogManager.getLogger(StreamingServer.class);
 
     @Override
     public void start(Stage stage) throws Exception {

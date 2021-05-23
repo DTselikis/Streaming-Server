@@ -6,6 +6,8 @@ import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
 import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import res.MediaInfo;
 
 import java.io.File;
@@ -16,6 +18,8 @@ public class VideoConverter implements Runnable {
     private final Integer targetRes;
     private final String targetContainer;
     private final File source;
+
+    private static final Logger LOGGER = LogManager.getLogger(VideoConverter.class);
 
     @FXML
     private TextField ffmpeg_tf;
@@ -58,7 +62,11 @@ public class VideoConverter implements Runnable {
 
         FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
 
+        LOGGER.info("Converting " + builder.toString());
+
         // Run a one-pass encode
         executor.createJob(builder).run();
+
+        LOGGER.info("Convertion for " + builder.toString() + "ended");
     }
 }

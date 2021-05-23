@@ -1,5 +1,7 @@
 package services;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import res.MediaInfo;
 import res.VideoInfo;
 import streaming.StreamingServerSocket;
@@ -15,6 +17,8 @@ public class ClientHandle implements Runnable {
     private final int port;
 
     private final String LOCALHOST = "127.0.0.1";
+
+    private static final Logger LOGGER = LogManager.getLogger(ClientHandle.class);
 
     public ClientHandle(StreamingServerSocket server, Socket socket, int port) {
         this.server = server;
@@ -86,7 +90,9 @@ public class ClientHandle implements Runnable {
 
         try {
             cmd.inheritIO().start();
+            LOGGER.info("Streaming started for port: " + this.port + " : " + args.toString());
         } catch (IOException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
 
@@ -105,6 +111,7 @@ public class ClientHandle implements Runnable {
 
     @Override
     public void run() {
+        LOGGER.info("Client on port " + this.port + "initialized!");
         ObjectInputStream input = null;
         ObjectOutputStream output = null;
 
@@ -112,6 +119,7 @@ public class ClientHandle implements Runnable {
             input = new ObjectInputStream(socket.getInputStream());
             output = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
 
@@ -120,9 +128,12 @@ public class ClientHandle implements Runnable {
         // Receive bitrate and format from client
         try {
             msg = input.readObject().toString().split("#");
+            LOGGER.info("Received bitrate and format for port: " + this.port);
         } catch (IOException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
 
@@ -132,16 +143,21 @@ public class ClientHandle implements Runnable {
         // Send list of supported files
         try {
             output.writeObject(getSupportedFiles(MediaInfo.getResFromBitrate(bitrate), format));
+            LOGGER.info("Sent list of supported files for port: " + this,port);
         } catch (IOException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
 
         // Receive file name to be streamed and protocol
         try {
             msg = input.readObject().toString().split("#");
+            LOGGER.info("Received file name to be streamed for port: " + this.port);
         } catch (IOException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
 
@@ -155,6 +171,7 @@ public class ClientHandle implements Runnable {
         // For RTP protocol the rest of the communication will
         // be handled by FileServer
         if (protocol.equals("RTP")) {
+            LOGGER.info("RTP protocol detected for port: " + this.port);
             OutputStream outStream = null;
             try {
                 outStream = socket.getOutputStream();
@@ -162,6 +179,7 @@ public class ClientHandle implements Runnable {
                 outStream.close();
             }
             catch (IOException ex) {
+                LOGGER.error(ex.getMessage());
                 ex.printStackTrace();
             }
         }
@@ -169,7 +187,9 @@ public class ClientHandle implements Runnable {
             // Notify client to start playing
             try {
                 output.writeObject(response);
+                LOGGER.info("Notified client to start playing for port: " + this.port);
             } catch (IOException e) {
+                LOGGER.error(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -178,6 +198,7 @@ public class ClientHandle implements Runnable {
             input.close();
             output.close();
         } catch (IOException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
 
