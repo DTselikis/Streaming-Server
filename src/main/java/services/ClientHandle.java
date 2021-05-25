@@ -179,6 +179,8 @@ public class ClientHandle implements Runnable {
             LOGGER.info("RTP protocol detected for port: " + this.port);
             OutputStream outStream = null;
             try {
+                // To prevent the case that .rdp file was not ready to be sent
+                Thread.sleep(2000);
                 outStream = socket.getOutputStream();
                 new FileServer(response, output, outStream).transmit();
                 outStream.close();
@@ -186,6 +188,8 @@ public class ClientHandle implements Runnable {
             catch (IOException ex) {
                 LOGGER.error(ex.getMessage());
                 ex.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         else {
