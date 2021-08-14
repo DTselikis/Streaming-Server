@@ -1,5 +1,5 @@
 
-##Streaming Server##
+## Streaming Server
 <div align="center">A streaming server powered by JAVA 11 and JavaFX.
 <img src="https://i.imgur.com/AHfbHOU.png">
 </div>
